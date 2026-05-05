@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import {
   DocumentService,
   type BookDocument,
-  type Book,
+  type Book, type ReadProgress,
 } from "@/services/document.service";
 
 export type { BookDocument };
@@ -28,7 +28,7 @@ export const useDocumentsStore = defineStore("documents", {
       return DocumentService.getDocument(id);
     },
 
-    updateProgress(id: string, progress: number): void {
+    updateProgress(id: string, progress: ReadProgress): void {
       DocumentService.updateProgress(id, progress);
     },
 
@@ -65,9 +65,6 @@ export const useDocumentsStore = defineStore("documents", {
       return DocumentService.getRecentDocuments();
     },
 
-    getTotalReadingProgress: (state) => {
-      return DocumentService.getTotalReadingProgress();
-    },
     // Add this getter to retrieve a document by ID from the store's state
     getDocumentById: (state) => (id: string) => {
       return state.documents.find((doc) => doc.id === id) || null;

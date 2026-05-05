@@ -12,12 +12,17 @@ export interface BookDocument {
   size: number
   uploadedAt: string
   lastReadAt?: string
-  progress: number
+  progress?: ReadProgress
   content: string
   bookmark?: {
     page: number
     position: number
   }
+}
+
+export interface ReadProgress {
+  percentage: number,
+  checkpoint: string,
 }
 
 export interface Book {
@@ -27,7 +32,7 @@ export interface Book {
   size: number
   uploadedAt: string
   lastReadAt?: string
-  progress: number
+  progress?: ReadProgress
   content?: ArrayBuffer
   bookmark?: {
     page: number
@@ -80,7 +85,6 @@ export class DocumentService {
         type,
         size: file.size,
         uploadedAt: new Date().toISOString(),
-        progress: 0,
         content: hash,
       }
 
@@ -129,7 +133,7 @@ export class DocumentService {
   /**
    * Update document progress
    */
-  static updateProgress(id: string, progress: number): void {
+  static updateProgress(id: string, progress: ReadProgress): void {
     const store = this.getStore()
     const doc = store.documents.find(doc => doc.id === id)
     if (doc) {
@@ -171,16 +175,6 @@ export class DocumentService {
         return dateB - dateA
       })
       .slice(0, limit)
-  }
-
-  /**
-   * Calculate total reading progress across all documents
-   */
-  static getTotalReadingProgress(): number {
-    const store = this.getStore()
-    if (store.documents.length === 0) return 0
-    const totalProgress = store.documents.reduce((sum, doc) => sum + doc.progress, 0)
-    return totalProgress / store.documents.length
   }
 
   /**

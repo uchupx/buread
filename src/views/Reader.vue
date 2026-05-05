@@ -242,7 +242,7 @@
 import {ref, computed, onMounted, onUnmounted, watch, nextTick} from "vue";
 import {useRouter, useRoute} from "vue-router";
 import {useDocumentsStore} from "@/stores/documents";
-import type {BookDocument} from "@/services/document.service";
+import type {BookDocument, ReadProgress} from "@/services/document.service";
 import {DocumentService} from "@/services/document.service";
 import ThemeToggle from "@/components/ThemeToggle.vue";
 import BottomNavbar from "@/components/BottomNavbar.vue";
@@ -363,7 +363,7 @@ const toggleFullscreen = () => {
     document.documentElement.requestFullscreen();
     isFullscreen.value = true;
   } else {
-    document.documentElement.exitFullscreen();
+    // document.documentElement.exitFullscreen();
     isFullscreen.value = false;
   }
 };
@@ -435,7 +435,7 @@ const loadPage = async () => {
     } else if (currentDocument.value.type === "epub") {
       await loadEPUBPage();
     }
-    updateProgress();
+    // updateProgress();
   } catch (err: any) {
     error.value = `Failed to load page: ${err.message || err}`;
   } finally {
@@ -454,35 +454,23 @@ const handleBookLoad = async (e: any) => {
 
   if (view.value) {
     bookMetadata.value = view.value.book?.metadata || {};
-    updateNavigationButtons();
+    // updateNavigationButtons();
   }
 };
 
 const updateNavigationButtons = () => {
   if (!view.value || !view.value.book) return;
 
-  canGoPrev.value = lastLocation.value && lastLocation.value.index! > 0;
+  // canGoPrev.value = lastLocation.value && lastLocation.value.index! > 0;
   canGoNext.value = true;
 };
 
 const handleRelocate = (e: any) => {
   console.log("Relocate event:", e.detail);
   console.log(e)
-  const {reason, range, index, fraction, size, location} = e.detail || {};
+  const {reason, range, index, fraction, cfi} = e.detail || {};
 
-  if (typeof index === "number") {
-    lastLocation.value = {
-      index,
-      fraction,
-      range: range || null,
-      reason: reason || "manual",
-    };
-
-    // Update current page and progress
-
-  }
-
-  updateProgress();
+  updateProgress(cfi);
   currentPage.value = fraction;
 
   // Update navigation buttons
@@ -557,11 +545,15 @@ const loadEPUBPage = async () => {
   }
 };
 
-const updateProgress = () => {
+const updateProgress = (cfi:string) => {
   progress.value = currentPage.value;
-console.log(progress.value)
   if (currentDocument.value) {
-    documentsStore.updateProgress(currentDocument.value.id, progress.value);
+    const readingProgress = {
+      percentage: progress.value * 100,
+      checkpoint: cfi
+    } as ReadProgress
+
+    documentsStore.updateProgress(currentDocument.value.id, readingProgress);
   }
 };
 
@@ -583,6 +575,8 @@ onMounted(async () => {
   if (documentsStore.documents.length === 0) {
     await documentsStore.loadDocuments();
   }
+
+  console.log(currentDocument.value)
 
   if (!currentDocument.value) {
     error.value = "Document not found";
@@ -675,6 +669,10 @@ onMounted(async () => {
   }
 
   await loadPage();
+
+  if (currentDocument.value.progress) {
+    await view.value.goTo(currentDocument.value.progress.checkpoint)
+  }
 
   // Add fullscreen event listener
   document.addEventListener("fullscreenchange", handleFullscreenChange);
