@@ -240,6 +240,7 @@
 
 <script setup lang="ts">
 import {ref, computed, onMounted, onUnmounted, watch, nextTick} from "vue";
+import { LogService } from "@/services/log.service";
 import {useRouter, useRoute} from "vue-router";
 import {useDocumentsStore} from "@/stores/documents";
 import type {BookDocument, ReadProgress} from "@/services/document.service";
@@ -445,11 +446,11 @@ const loadPage = async () => {
 
 const loadPDFPage = async () => {
   // PDF.js implementation would go here
-  console.log("Loading PDF page...");
+  LogService.log("Loading PDF page...");
 };
 
 const handleBookLoad = async (e: any) => {
-  console.log("Foliate book loaded", e.detail);
+  LogService.log("Foliate book loaded", e.detail);
   const {doc, index} = e.detail || {};
 
   if (view.value) {
@@ -466,8 +467,8 @@ const updateNavigationButtons = () => {
 };
 
 const handleRelocate = (e: any) => {
-  console.log("Relocate event:", e.detail);
-  console.log(e)
+  LogService.log("Relocate event:", e.detail);
+  LogService.log(e)
   const {reason, range, index, fraction, cfi} = e.detail || {};
 
   updateProgress(cfi);
@@ -501,12 +502,12 @@ const loadEPUBPage = async () => {
     const blob = new Blob([doc.content], {type: "application/epub+zip"});
     tempFileUrl.value = URL.createObjectURL(blob);
 
-    console.log("Opening EPUB from URL:", tempFileUrl.value);
+    LogService.log("Opening EPUB from URL:", tempFileUrl.value);
 
     // Open EPUB file using Foliate JS
     await view.value.open(tempFileUrl.value);
 
-    console.log("Foliate view book:", view.value.book);
+    LogService.log("Foliate view book:", view.value.book);
 
     // Navigate to first section on initial load
     if (!lastLocation.value && view.value.book?.sections?.length > 0) {
@@ -516,10 +517,10 @@ const loadEPUBPage = async () => {
     // Update the foliateBook ref
     foliateBook.value = view.value.book;
 
-    console.log("Foliate book initialized:", foliateBook.value);
-    console.log("Sections:", foliateBook.value?.sections?.length);
-    console.log("TOC:", foliateBook.value?.toc);
-    console.log("Metadata:", foliateBook.value?.metadata);
+    LogService.log("Foliate book initialized:", foliateBook.value);
+    LogService.log("Sections:", foliateBook.value?.sections?.length);
+    LogService.log("TOC:", foliateBook.value?.toc);
+    LogService.log("Metadata:", foliateBook.value?.metadata);
 
     // Update total pages
     if (foliateBook.value?.sections) {
@@ -538,9 +539,9 @@ const loadEPUBPage = async () => {
               "Unknown";
     }
 
-    console.log("EPUB loaded successfully:", title);
+    LogService.log("EPUB loaded successfully:", title);
   } catch (err: any) {
-    console.error("Error loading EPUB:", err);
+    LogService.error("Error loading EPUB:", err);
     error.value = `Failed to load EPUB: ${err.message || err}`;
   }
 };
@@ -562,7 +563,7 @@ const handleFullscreenChange = () => {
   isFullscreen.value = !!(document.documentElement as any).fullscreenElement;
 };
 const handleLayoutChange = (e: any) => {
-  console.log("Layout changed:", e.detail);
+  LogService.log("Layout changed:", e.detail);
   // Check if dynamic page count is in the event detail
   if (e.detail?.totalPages) {
     totalPages.value = e.detail.totalPages;
@@ -576,7 +577,7 @@ onMounted(async () => {
     await documentsStore.loadDocuments();
   }
 
-  console.log(currentDocument.value)
+  LogService.log(currentDocument.value)
 
   if (!currentDocument.value) {
     error.value = "Document not found";
@@ -584,7 +585,7 @@ onMounted(async () => {
     return;
   }
 
-  console.log("Reader mounted, loading Foliate JS...");
+  LogService.log("Reader mounted, loading Foliate JS...");
 
   // Wait for next tick to ensure DOM is ready
   await nextTick();
@@ -592,17 +593,17 @@ onMounted(async () => {
   // Load Foliate JS dynamically as module
   const loadFoliateJS = new Promise<void>((resolve, reject) => {
     if (window.customElements?.get("foliate-view")) {
-      console.log("Foliate JS custom element already registered");
+      LogService.log("Foliate JS custom element already registered");
       resolve();
       return;
     }
 
-    console.log("Loading Foliate JS module from /foliate-js/view.js");
+    LogService.log("Loading Foliate JS module from /foliate-js/view.js");
 
     // Poll for custom element registration (better for ES modules)
     const checkInterval = setInterval(function () {
       if (window.customElements?.get("foliate-view")) {
-        console.log("Foliate JS custom element registered!");
+        LogService.log("Foliate JS custom element registered!");
         clearInterval(checkInterval);
         resolve();
       }
@@ -611,7 +612,7 @@ onMounted(async () => {
     // Timeout after 10 seconds
     const timeoutId = setTimeout(() => {
       clearInterval(checkInterval);
-      console.error("Foliate JS loading timeout");
+      LogService.error("Foliate JS loading timeout");
       reject(new Error("Failed to load Foliate JS: timeout"));
     }, 10000);
 
@@ -622,7 +623,7 @@ onMounted(async () => {
     script.onerror = () => {
       clearInterval(checkInterval);
       clearTimeout(timeoutId);
-      console.error("Failed to load Foliate JS script");
+      LogService.error("Failed to load Foliate JS script");
       reject(new Error("Failed to load Foliate JS"));
     };
     document.body.appendChild(script);
@@ -630,7 +631,7 @@ onMounted(async () => {
 
   await loadFoliateJS;
 
-  console.log("Foliate JS loaded, creating foliate-view element");
+  LogService.log("Foliate JS loaded, creating foliate-view element");
 
   // Create foliate-view element
   view.value = document.createElement("foliate-view");
@@ -638,7 +639,7 @@ onMounted(async () => {
   view.value.style.width = "100%";
   view.value.style.height = "100%";
 
-  console.log(view.value.layout)
+  LogService.log(view.value.layout)
   // Add event listeners to the foliate-view element
   view.value.addEventListener("load", handleBookLoad);
   view.value.addEventListener("relocate", handleRelocate);
@@ -651,9 +652,9 @@ onMounted(async () => {
   // Append foliate-view to the container
   if (foliateView.value) {
     foliateView.value.appendChild(view.value);
-    console.log("foliate-view appended to container");
+    LogService.log("foliate-view appended to container");
   } else {
-    console.error("foliateView container not available");
+    LogService.error("foliateView container not available");
     throw new Error("foliateView container not available");
   }
 
@@ -670,8 +671,10 @@ onMounted(async () => {
 
   await loadPage();
 
-  if (currentDocument.value.progress) {
+  if (currentDocument.value.progress && currentDocument.value.progress.checkpoint) {
     await view.value.goTo(currentDocument.value.progress.checkpoint)
+  } else {
+    await view.value.renderer.goTo({index:0})
   }
 
   // Add fullscreen event listener
@@ -698,7 +701,7 @@ onUnmounted(() => {
   // Clean up temporary file URL
   if (tempFileUrl.value) {
     URL.revokeObjectURL(tempFileUrl.value);
-    console.log("Revoked temporary file URL:", tempFileUrl.value);
+    LogService.log("Revoked temporary file URL:", tempFileUrl.value);
     tempFileUrl.value = null;
   }
 

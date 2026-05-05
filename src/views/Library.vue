@@ -145,8 +145,8 @@
                             <span>{{
                                 DocumentService.formatDate(doc.uploadedAt)
                             }}</span>
-                            <span v-if="doc.progress"
-                                >{{ Math.round(doc.progress * 100) }}%
+                            <span v-if="doc.progress && doc.progress.percentage"
+                                >{{ Math.round(doc.progress.percentage) }}%
                                 read</span
                             >
                         </div>
