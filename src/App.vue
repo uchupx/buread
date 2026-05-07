@@ -6,6 +6,13 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import { onMounted } from 'vue'
+import { initializeTheme } from '@/services/theme.service'
+
+onMounted(() => {
+  // Initialize theme from local storage or use default
+  initializeTheme()
+})
 </script>
 
 <style scoped>

@@ -1,34 +1,17 @@
 <template>
     <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <!-- Header -->
-        <header
-            class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
-        >
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <div class="flex items-center">
-                        <BookOpen
-                            class="w-8 h-8 text-primary-600 dark:text-primary-400 mr-3"
-                        />
-                        <h1
-                            class="text-2xl font-bold text-gray-900 dark:text-white"
-                        >
-                            WebReader
-                        </h1>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <ThemeToggle />
-                        <button
-                            @click="openFileUpload"
-                            class="btn-primary flex items-center hidden lg:flex"
-                        >
-                            <Upload class="w-4 h-4 mr-2" />
-                            Upload Document
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <!-- Top Navbar -->
+        <TopNavbar />
+        <!-- Desktop Upload Button -->
+        <div class="hidden lg:flex justify-end px-4 sm:px-6 lg:px-8 mt-20 mb-4">
+            <button
+                @click="openFileUpload"
+                class="btn-primary flex items-center"
+            >
+                <Upload class="w-4 h-4 mr-2" />
+                Upload Document
+            </button>
+        </div>
 
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 lg:pb-8">
@@ -178,9 +161,9 @@
 
         <!-- Bottom Navigation (Dark Mode Only) -->
         <BottomNavbar />
-
         <!-- Floating Action Button -->
         <FloatingActionButton :onClick="openFileUpload" />
+
     </div>
 </template>
 
@@ -190,6 +173,7 @@ import { useRouter } from "vue-router";
 import { useDocumentsStore } from "@/stores/documents";
 import type { BookDocument } from "@/services/document.service";
 import { DocumentService } from "@/services/document.service";
+import TopNavbar from "@/components/TopNavbar.vue";
 import ThemeToggle from "@/components/ThemeToggle.vue";
 import BottomNavbar from "@/components/BottomNavbar.vue";
 import FloatingActionButton from "@/components/FloatingActionButton.vue";
