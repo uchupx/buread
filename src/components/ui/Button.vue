@@ -1,16 +1,16 @@
 <template>
   <button
-    class="btn flex items-center justify-center gap-2"
-    :class="[variantClass, sizeClass]"
-    @click="handleClick"
-    :disabled="disabled"
+      class="btn gap-2 border-2 rounded rounded-lg"
+      :class="[variantClass, sizeClass]"
+      @click="handleClick"
+      :disabled="disabled"
   >
-    <slot />
+    <slot/>
   </button>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, computed } from 'vue'
+import {defineProps, defineEmits, computed} from 'vue'
 
 const props = defineProps({
   variant: {
@@ -24,6 +24,10 @@ const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  focus: {
+    type: Boolean,
+    default: false,
   }
 })
 
@@ -34,11 +38,20 @@ const handleClick = (e: MouseEvent) => {
 }
 
 const variantClass = computed(() => {
-  return {
+  let classes = {
     'bg-primary-600 text-white hover:bg-primary-700': props.variant === 'primary',
     'bg-gray-200 text-gray-800 hover:bg-gray-300': props.variant === 'secondary',
     'bg-transparent border border-gray-300 text-gray-800 hover:bg-gray-100': props.variant === 'outline'
   }
+  if (props.focus) {
+    classes = {
+      'bg-white text-primary-600 border-primary-600': props.variant === 'primary',
+      'bg-gray-800 text-gray-200 border-gray-300': props.variant === 'secondary',
+      'bg-gray-300 opacity-90 text-white border-gray-300': props.variant === 'outline'
+    }
+
+  }
+  return classes;
 })
 
 const sizeClass = computed(() => {
@@ -52,10 +65,11 @@ const sizeClass = computed(() => {
 
 <style scoped>
 .btn {
-  border-radius: 4px;
+  //border-radius: 4px;
   //transition-colors: duration-200;
   cursor: pointer;
 }
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;

@@ -1,5 +1,5 @@
 export interface EbookSettings {
-  theme: 'light' | 'dark' | 'sepia'
+  theme: 'light' | 'dark'
   fontSize: number
   fontFamily: 'serif' | 'sans-serif'
   lineHeight: number

@@ -74,12 +74,6 @@ const themes: ThemeOption[] = [
     iconClass: 'text-blue-400',
   },
   {
-    value: 'sepia',
-    label: 'Sepia',
-    icon: Sun,
-    iconClass: 'text-orange-600',
-  },
-  {
     value: 'high-contrast',
     label: 'High Contrast',
     icon: Eye,
@@ -106,7 +100,7 @@ const setTheme = (theme: Theme) => {
   currentTheme.value = theme
   
   // Remove all theme classes
-  document.documentElement.classList.remove('dark', 'sepia', 'high-contrast')
+  document.documentElement.classList.remove('dark', 'high-contrast')
   
   // Add the new theme class
   if (theme !== 'light') {
