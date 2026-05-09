@@ -7,11 +7,15 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { onMounted } from 'vue'
-import { initializeTheme } from '@/services/theme.service'
+import { ThemeService } from '@/services/theme.service'
+import {useSettingsStore} from "@/stores/settings.js";
 
-onMounted(() => {
+onMounted(async () => {
   // Initialize theme from local storage or use default
-  initializeTheme()
+  const setting = useSettingsStore()
+  ThemeService.initialize(setting)
+  await ThemeService.loadSetting()
+  ThemeService.initializeTheme()
 })
 </script>
 

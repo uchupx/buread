@@ -43,7 +43,7 @@
                   <CardContent class="space-y-4">
                     <div class="grid grid-cols-1 gap-3">
                       <Button
-                          @click="applyTheme('light')"
+                          @click="applyThemePreset('light')"
                           :focus="settings.theme === 'light'"
                           variant="outline"
                       >
@@ -57,7 +57,7 @@
                       </Button>
 
                       <Button
-                          @click="applyTheme('dark')"
+                          @click="applyThemePreset('dark')"
                           :focus="settings.theme === 'dark'"
                           variant="outline"
                       >
@@ -90,7 +90,7 @@
                         <input
                             type="text"
                             v-model="settings.textColor"
-                            class="flex-1 px-2 py-2 rounded border text-sm"
+                            class="input-field text-sm"
                         />
                       </div>
 
@@ -104,7 +104,7 @@
                         <input
                             type="text"
                             v-model="settings.backgroundColor"
-                            class="flex-1 px-2 py-2 rounded border text-sm"
+                            class="input-field text-sm"
                         />
                       </div>
                     </div>
@@ -380,6 +380,15 @@
                     <span>Justify: <span class="font-semibold">{{ settings.justify ? 'Yes' : 'No' }}</span></span>
                   </div>
                 </div>
+                  <Button
+                      variant="outline"
+                      class="w-full"
+                      @click="saveReaderSetting()"
+                  >
+                    <div class="flex items-center justify-center my-3 text-white w-full">
+                      <label>Save Reader Setting</label>
+                    </div>
+                  </Button>
               </CardContent>
             </Card>
           </div>
@@ -390,7 +399,6 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, watch} from 'vue'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card'
 import Slider from '@/components/ui/Slider.vue'
@@ -404,7 +412,7 @@ import BottomNavbar from '@/components/BottomNavbar.vue'
 import {Sun, Moon, Settings, Eye, RotateCcw} from 'lucide-vue-next'
 
 interface EbookSettings {
-  theme: 'light' | 'dark' | 'sepia'
+  theme: 'light' | 'dark'
   fontSize: number
   fontFamily: 'serif' | 'sans-serif'
   lineHeight: number
@@ -415,49 +423,28 @@ interface EbookSettings {
   justify: boolean
 }
 
-import {THEME_PRESETS, applyTheme} from '@/services/theme.service'
-import type {EbookSettings} from '@/types/ebook.types.ts'
+import {THEME_PRESETS, ThemeService} from '@/services/theme.service'
 
-const DEFAULT_SETTINGS: EbookSettings = {
-  theme: 'light',
-  fontSize: 18,
-  fontFamily: 'serif',
-  lineHeight: 1.8,
-  letterSpacing: 0,
-  pageWidth: 800,
-  backgroundColor: '#ffffff',
-  textColor: '#000000',
-  justify: false,
-}
+import {useSettingsStore} from '@/stores/settings'
+import {computed, onBeforeMount} from "vue";
 
-const settings = ref<EbookSettings>({...DEFAULT_SETTINGS})
-
-onMounted(() => {
-  const saved = localStorage.getItem('ebookSettings')
-  if (saved) {
-    try {
-      settings.value = JSON.parse(saved)
-    } catch (e) {
-      console.error('Failed to load settings', e)
-    }
-  }
+const settingsStore = useSettingsStore()
+const settings = computed(() => settingsStore.setting)
+onBeforeMount(() => {
+  ThemeService.initialize(settingsStore)
+  ThemeService.loadSetting()
 })
 
-watch(settings, (newSettings) => {
-  localStorage.setItem('ebookSettings', JSON.stringify(newSettings))
-}, {deep: true})
-
-const applyTheme = (theme: 'light' | 'dark' | 'sepia') => {
+const applyThemePreset = (theme: 'light' | 'dark') => {
   const preset = THEME_PRESETS[theme]
-  settings.value.theme = theme
-  settings.value.backgroundColor = preset.backgroundColor
-  settings.value.textColor = preset.textColor
-  applyTheme(theme, settings.value)
+  settingsStore.updateSetting('theme', theme)
+  // settingsStore.updateSetting('backgroundColor', preset.backgroundColor)
+  // settingsStore.updateSetting('textColor', preset.textColor)
+  // ThemeService.applyTheme(theme, settings.value)
 }
 
 const resetSettings = () => {
-  settings.value = {...DEFAULT_SETTINGS}
-  localStorage.removeItem('ebookSettings')
+  settingsStore.resetAllSettings()
 }
 
 const setCompactPreset = () => {
@@ -478,5 +465,10 @@ const setComfortablePreset = () => {
 const setSpaciousPreset = () => {
   settings.value.fontSize = 22
   settings.value.lineHeight = 2.2
+}
+
+const saveReaderSetting = () => {
+  settingsStore.updateSetting('textColor', settings.value.textColor)
+  settingsStore.updateSetting('backgroundColor', settings.value.backgroundColor)
 }
 </script>

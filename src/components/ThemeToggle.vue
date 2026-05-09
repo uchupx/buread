@@ -125,7 +125,7 @@ onMounted(() => {
   // Load saved theme
   const savedTheme = localStorage.getItem('webreader-theme') as Theme
   if (savedTheme && themes.find(theme => theme.value === savedTheme)) {
-    setTheme(savedTheme)
+    // setTheme(savedTheme)
   }
   
   // Add click outside listener

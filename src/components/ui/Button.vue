@@ -1,7 +1,7 @@
 <template>
   <button
-      class="btn gap-2 border-2 rounded rounded-lg"
-      :class="[variantClass, sizeClass]"
+      class="btn gap-2 border-2 rounded rounded-lg "
+      :class="[variantClass, sizeClass, props.class]"
       @click="handleClick"
       :disabled="disabled"
   >
@@ -12,10 +12,17 @@
 <script setup lang="ts">
 import {defineProps, defineEmits, computed} from 'vue'
 
+type ValidVariant = 'primary' | 'secondary' | 'outline'
+
 const props = defineProps({
   variant: {
+    type: String as () => ValidVariant,
+    default: 'primary',
+    validator: (value: string): value is ValidVariant => ['primary', 'secondary', 'outline'].includes(value)
+  },
+  class: {
     type: String,
-    default: 'primary'
+    default: null,
   },
   size: {
     type: String,
@@ -38,20 +45,20 @@ const handleClick = (e: MouseEvent) => {
 }
 
 const variantClass = computed(() => {
-  let classes = {
-    'bg-primary-600 text-white hover:bg-primary-700': props.variant === 'primary',
-    'bg-gray-200 text-gray-800 hover:bg-gray-300': props.variant === 'secondary',
-    'bg-transparent border border-gray-300 text-gray-800 hover:bg-gray-100': props.variant === 'outline'
+  const classes: Record<ValidVariant, string> = {
+    primary: 'bg-primary-600 text-white hover:bg-primary-700',
+    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
+    outline: 'bg-transparent border border-gray-300 text-gray-800 hover:opacity-60'
   }
   if (props.focus) {
-    classes = {
-      'bg-white text-primary-600 border-primary-600': props.variant === 'primary',
-      'bg-gray-800 text-gray-200 border-gray-300': props.variant === 'secondary',
-      'bg-gray-300 opacity-90 text-white border-gray-300': props.variant === 'outline'
-    }
-
+    return {
+      primary: 'bg-white text-primary-600 border-primary-600',
+      secondary: 'bg-gray-800 text-gray-200 border-gray-300',
+      outline: 'bg-gray-300 opacity-90 text-white border-gray-300'
+    }[props.variant]
   }
-  return classes;
+
+  return classes[props.variant];
 })
 
 const sizeClass = computed(() => {
