@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.claude
+.idea
+.kilocode
+.DS_Store
+*.tsbuildinfo
+README.md
+Dockerfile
+nginx.conf
+.gitignore
+package-lock.json

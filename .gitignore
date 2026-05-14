@@ -15,3 +15,6 @@ yarn-error.log*
 .kilocode/
 .playwright-mcp
 .idea/
+dist/
+v0/
+tsconfig.tsbuildinfo
