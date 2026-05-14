@@ -6,11 +6,11 @@
       :min="min"
       :max="max"
       :step="step"
-      :value="value"
+      :value="modelValue"
       @input="handleInput"
     >
     <div class="slider-value text-sm text-gray-500 dark:text-gray-400">
-      {{ value }}{{ unit }}
+      {{ modelValue }}{{ unit }}
     </div>
   </div>
 </template>
@@ -20,19 +20,19 @@ import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   min: {
-    type: Number,
+    type: [String, Number],
     default: 0
   },
   max: {
-    type: Number,
+    type: [String, Number],
     default: 100
   },
   step: {
-    type: Number,
+    type: [String, Number],
     default: 1
   },
-  value: {
-    type: Number,
+  modelValue: {
+    type: [String, Number],
     required: true
   },
   unit: {
@@ -41,10 +41,10 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['input'])
+const emits = defineEmits(['update:modelValue'])
 
 const handleInput = (e: Event) => {
-  emits('input', Number((e.target as HTMLInputElement).value))
+  emits('update:modelValue', Number((e.target as HTMLInputElement).value))
 }
 </script>
 

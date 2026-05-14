@@ -9,7 +9,7 @@ import { defineProps, provide, ref, watch } from 'vue'
 import RadioGroupItem from './RadioGroupItem.vue'
 
 const props = defineProps({
-  value: {
+  modelValue: {
     type: [String, Number, Boolean],
     required: true
   },
@@ -19,16 +19,16 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['update:value'])
+const emits = defineEmits(['update:modelValue'])
 
-const selectedValue = ref(props.value)
+const selectedValue = ref(props.modelValue)
 
-watch(() => props.value, (newVal) => {
+watch(() => props.modelValue, (newVal) => {
   selectedValue.value = newVal
 })
 
 watch(selectedValue, (newVal) => {
-  emits('update:value', newVal)
+  emits('update:modelValue', newVal)
 })
 
 provide('radioGroupContext', {

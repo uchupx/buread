@@ -147,7 +147,7 @@
                       <RadioGroup v-model="settings.fontFamily">
                         <div class="flex items-center space-x-2">
                           <RadioGroupItem value="serif" id="serif"/>
-                          <Label for="serif" class="font-normal cursor-pointer flex-1">
+                          <Label forLabel="serif" class="font-normal cursor-pointer flex-1">
                           <span style="fontFamily: 'Georgia, serif'">
                             Serif (Georgia) - Traditional
                           </span>
@@ -155,7 +155,7 @@
                         </div>
                         <div class="flex items-center space-x-2">
                           <RadioGroupItem value="sans-serif" id="sans-serif"/>
-                          <Label for="sans-serif" class="font-normal cursor-pointer flex-1">
+                          <Label forLabel="sans-serif" class="font-normal cursor-pointer flex-1">
                           <span style="fontFamily: 'Arial, sans-serif'">
                             Sans-serif (Arial) - Modern
                           </span>
@@ -208,7 +208,7 @@
 
                     <!-- Text Justification -->
                     <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <Label for="justify" class="font-semibold cursor-pointer">
+                      <Label forLabel="justify" class="font-semibold cursor-pointer">
                         Justify Text
                       </Label>
                       <Switch
@@ -448,23 +448,23 @@ const resetSettings = () => {
 }
 
 const setCompactPreset = () => {
-  settings.value.fontSize = 16
-  settings.value.lineHeight = 1.6
+  settingsStore.updateSetting('fontSize', 16)
+  settingsStore.updateSetting('lineHeight', 1.6)
 }
 
 const setDefaultPreset = () => {
-  settings.value.fontSize = 18
-  settings.value.lineHeight = 1.8
+  settingsStore.updateSetting('fontSize', 18)
+  settingsStore.updateSetting('lineHeight', 1.8)
 }
 
 const setComfortablePreset = () => {
-  settings.value.fontSize = 20
-  settings.value.lineHeight = 2
+  settingsStore.updateSetting('fontSize', 20)
+  settingsStore.updateSetting('lineHeight', 2)
 }
 
 const setSpaciousPreset = () => {
-  settings.value.fontSize = 22
-  settings.value.lineHeight = 2.2
+  settingsStore.updateSetting('fontSize', 22)
+  settingsStore.updateSetting('lineHeight', 2.2)
 }
 
 const saveReaderSetting = () => {

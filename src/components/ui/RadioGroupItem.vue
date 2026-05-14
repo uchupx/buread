@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, inject, computed } from 'vue'
+import { defineProps, inject, computed, type Ref } from 'vue'
 
 const props = defineProps({
   id: {
@@ -32,7 +32,7 @@ const props = defineProps({
   },
   name: {
     type: String,
-    required: true
+    default: 'radio-group'
   },
   value: {
     type: [String, Number, Boolean],
@@ -40,7 +40,12 @@ const props = defineProps({
   }
 })
 
-const radioGroupContext = inject('radioGroupContext')
+interface RadioGroupContext {
+  selectedValue: Ref<any>
+  onSelect: (value: any) => void
+}
+
+const radioGroupContext = inject<RadioGroupContext>('radioGroupContext')
 
 if (!radioGroupContext) {
   throw new Error('RadioGroupItem must be used within a RadioGroup')

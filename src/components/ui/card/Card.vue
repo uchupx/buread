@@ -15,7 +15,7 @@ defineExpose({ CardHeader, CardTitle, CardDescription, CardContent })
 
 <style scoped>
 .card {
-  //transition-shadow: duration-200;
+  /* transition-shadow: duration-200; */
   &:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }

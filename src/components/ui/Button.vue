@@ -72,8 +72,8 @@ const sizeClass = computed(() => {
 
 <style scoped>
 .btn {
-  //border-radius: 4px;
-  //transition-colors: duration-200;
+  /* border-radius: 4px; */
+  /* transition-colors: duration-200; */
   cursor: pointer;
 }
 

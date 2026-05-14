@@ -385,14 +385,14 @@ const toggleTOC = () => {
 
 const increaseFontSize = () => {
     if (fontSize.value < 24) {
-        fontSize.value += 2;
+        settingsStore.updateSetting("fontSize", fontSize.value + 2);
         updateFoliateStyles();
     }
 };
 
 const decreaseFontSize = () => {
     if (fontSize.value > 12) {
-        fontSize.value -= 2;
+        settingsStore.updateSetting("fontSize", fontSize.value - 2);
         updateFoliateStyles();
     }
 };
@@ -665,8 +665,9 @@ onMounted(async () => {
 
     LogService.log(view.value.layout);
     // Add event listeners to the foliate-view element
-    view.value.addEventListener("load", ({ detail: { doc } }) => {
-        handleBookLoad;
+    view.value.addEventListener("load", (e: any) => {
+        handleBookLoad(e);
+        const { doc } = e.detail;
         const style = doc.createElement("style");
         style.textContent = `
       body {

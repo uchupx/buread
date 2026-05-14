@@ -1,7 +1,7 @@
 <template>
   <label
     class="label text-sm font-medium"
-    :for="for"
+    :for="forLabel"
     :class="{ 'text-gray-500 dark:text-gray-400': !required, 'text-gray-900 dark:text-white': required}"
   >
     <slot />
@@ -13,7 +13,7 @@
 import { defineProps } from 'vue'
 
 const props = defineProps({
-  for: {
+  forLabel: {
     type: String,
     default: ''
   },

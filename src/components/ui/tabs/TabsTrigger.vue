@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, inject, computed } from 'vue'
+import { defineProps, inject, computed, type Ref } from 'vue'
 
 const props = defineProps({
   value: {
@@ -18,7 +18,12 @@ const props = defineProps({
   }
 })
 
-const tabsContext = inject('tabsContext')
+interface TabsContext {
+  activeTab: Ref<string>
+  onTabChange: (tab: string) => void
+}
+
+const tabsContext = inject<TabsContext>('tabsContext')
 
 if (!tabsContext) {
   throw new Error('TabsTrigger must be used within a Tabs component')
